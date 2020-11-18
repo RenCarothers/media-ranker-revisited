@@ -25,4 +25,3 @@ class ActiveSupport::TestCase
     OmniAuth.config.test_mode = true
   end
 end
-end
