@@ -1,7 +1,7 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
 
-  before_action :find_user
+  before_action :current_user
 
   def render_404
     return render :file => "#{Rails.root}/public/404.html", :status => 404, :layout => false
@@ -9,9 +9,9 @@ class ApplicationController < ActionController::Base
 
   private
 
-  def find_user
+  def current_user
     if session[:user_id]
-      @login_user = User.find_by(id: session[:user_id])
+      @current_user = User.find_by(id: session[:user_id])
     end
   end
 end
