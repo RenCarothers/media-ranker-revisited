@@ -74,6 +74,10 @@ describe Work do
   end
 
   describe "vote_count" do
+    before do
+      @dan = users(:dan)
+      @kari = users(:kari)
+    end
     it "defaults to 0" do
       work = Work.create!(title: "test title", category: "movie")
       expect(work).must_respond_to :vote_count
@@ -82,12 +86,13 @@ describe Work do
 
     it "tracks the number of votes" do
       work = Work.create!(title: "test title", category: "movie")
-      4.times do |i|
-        user = User.create!(username: "user#{i}")
-        Vote.create!(user: user, work: work)
-      end
-      expect(work.vote_count).must_equal 4
-      expect(Work.find(work.id).vote_count).must_equal 4
+      # 4.times do |i|
+      #   user = User.create!(username: "user#{i}")
+      Vote.create!(user: @dan, work: work)
+      Vote.create!(user: @kari, work: work)
+      # end
+      expect(work.vote_count).must_equal 2
+      expect(Work.find(work.id).vote_count).must_equal 2
     end
   end
 
@@ -95,10 +100,14 @@ describe Work do
     before do
       # TODO DPR: This runs pretty slow. Fixtures?
       # Create users to do the voting
-      test_users = []
-      20.times do |i|
-        test_users << User.create!(username: "user#{i}")
-      end
+      @dan = users(:dan)
+      @kari = users(:kari)
+      @bob = users(:bob)
+
+      test_users = [@dan, @kari, @bob]
+      # 20.times do |i|
+      #   test_users << User.create!(username: "user#{i}")
+      # end
 
       # Create media to vote upon
       Work.where(category: "movie").destroy_all
