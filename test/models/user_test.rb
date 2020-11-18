@@ -38,5 +38,13 @@ describe User do
       expect(result).must_equal false
       expect(user2.errors.messages).must_include :username
     end
+
+    it "requires a unique uid" do
+      @dan = users(:dan)
+
+      dup = User.new(username: "fake_dan", provider: "github", uid: 12345, email: "ada@adadevelopersacademy.org")
+      expect(dup.valid?).must_equal false
+      expect(dup.errors.messages).must_include :uid
+    end
   end
 end
