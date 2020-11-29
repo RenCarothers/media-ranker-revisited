@@ -40,11 +40,41 @@ describe User do
     end
 
     it "requires a unique uid" do
-      @dan = users(:dan)
+      dan = users(:dan)
 
       dup = User.new(username: "fake_dan", provider: "github", uid: 12345, email: "ada@adadevelopersacademy.org")
       expect(dup.valid?).must_equal false
       expect(dup.errors.messages).must_include :uid
     end
+  end
+
+  describe "custom methods" do
+    describe "build from github" do
+      let (:new_user) {
+        {
+            uid: "1337",
+            provider: "github",
+            info: {
+                username: "username",
+                name: "name",
+                email: "email@email.com",
+                avatar: nil
+            }
+        }
+      }
+
+      it "can successfully build a user from a given auth_hash" do
+
+        user = User.build_from_github(new_user)
+
+        puts user.inspect
+        expect(user.valid?).must_equal true
+        expect(user.uid).must_equal new_user[:uid]
+        expect(user.provider).must_equal new_user[:provider]
+        expect(user.username).must_equal new_user[:info][:name]
+        expect(user.email).must_equal new_user[:info][:email]
+      end
+    end
+
   end
 end
