@@ -52,4 +52,29 @@ describe UsersController do
       expect(user.errors.messages[:uid]).must_equal ["has already been taken"]
     end
   end
+
+  describe "logoout" do
+    it "successfully logs a user out, clearing the session" do
+      user = users(:bob)
+
+      perform_login(user)
+
+      expect(session[:user_id]).must_equal user.id
+
+      post logout_path
+
+      expect(session[:user_id]).must_be_nil
+      expect(flash[:result_text]).must_equal "Successfully logged out"
+
+      must_redirect_to root_path
+    end
+
+    it "provides a message if no user is logged in" do
+      post logout_path
+
+      expect(flash[:result_text]).must_equal "Error; no user was logged in."
+
+      must_redirect_to root_path
+    end
+  end
 end

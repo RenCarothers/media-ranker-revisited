@@ -58,15 +58,29 @@ class UsersController < ApplicationController
   # end
 
   def logout
-    session[:user_id] = nil
-    flash[:status] = :success
-    flash[:result_text] = "Successfully logged out"
-    redirect_to root_path
+    find_user
+
+    if @login_user
+      session[:user_id] = nil
+      flash[:status] = :success
+      flash[:result_text] = "Successfully logged out"
+      redirect_to root_path
+    else
+      flash.now[:status] = :failure
+      flash.now[:result_text] = "Error; no user was logged in."
+      redirect_to root_path
+    end
   end
 
   private
 
   def strong_user_params # TODO: Currently unused. Not sure how to incorporate these into the create method?
     return params.require(:user).permit(:username, :uid, :email, :provider, :avatar)
+  end
+
+  def find_user
+    if session[:user_id]
+      @login_user = User.find_by(id: session[:user_id])
+    end
   end
 end
