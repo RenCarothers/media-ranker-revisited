@@ -31,41 +31,15 @@ class UsersController < ApplicationController
     redirect_to root_path
   end
 
-  # def login_form
-  # end
-
-  # def login
-  #   username = params[:username]
-  #   if username and user = User.find_by(username: username)
-  #     session[:user_id] = user.id
-  #     flash[:status] = :success
-  #     flash[:result_text] = "Successfully logged in as existing user #{user.username}"
-  #   else
-  #     user = User.new(username: username)
-  #     if user.save
-  #       session[:user_id] = user.id
-  #       flash[:status] = :success
-  #       flash[:result_text] = "Successfully created new user #{user.username} with ID #{user.id}"
-  #     else
-  #       flash.now[:status] = :failure
-  #       flash.now[:result_text] = "Could not log in"
-  #       flash.now[:messages] = user.errors.messages
-  #       render "login_form", status: :bad_request
-  #       return
-  #     end
-  #   end
-  #   redirect_to root_path
-  # end
-
   def logout
-    find_user
+    current_user
 
-    if @login_user
+    if @current_user
       session[:user_id] = nil
       flash[:status] = :success
       flash[:result_text] = "Successfully logged out"
       redirect_to root_path
-    else
+    else # TODO: would this ever show up? Idk if this ever would but added it so that logout had an edge case- no user logged in
       flash.now[:status] = :failure
       flash.now[:result_text] = "Error; no user was logged in."
       redirect_to root_path
@@ -76,11 +50,5 @@ class UsersController < ApplicationController
 
   def strong_user_params # TODO: Currently unused. Not sure how to incorporate these into the create method?
     return params.require(:user).permit(:username, :uid, :email, :provider, :avatar)
-  end
-
-  def find_user
-    if session[:user_id]
-      @login_user = User.find_by(id: session[:user_id])
-    end
   end
 end
