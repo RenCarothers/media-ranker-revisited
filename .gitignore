@@ -6,6 +6,9 @@
 
 # Ignore bundler config.
 /.bundle
+/.idea
+.generators
+.env
 
 # Ignore all logfiles and tempfiles.
 /log/*
