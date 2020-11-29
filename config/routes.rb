@@ -3,7 +3,7 @@ Rails.application.routes.draw do
   root "works#root"
 
   get "/auth/github", as: "github_login" #OmniAuth login
-  get "/auth/:provider/callback", to: "users#create" #OmniAuth Github callback
+  get "/auth/:provider/callback", to: "users#create", as: "auth_callback" #OmniAuth Github callback
 
   # get "/login", to: "users#login_form", as: "login"
   # post "/login", to: "users#login"
