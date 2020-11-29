@@ -10,14 +10,15 @@ class UsersController < ApplicationController
 
   def create
     auth_hash = request.env["omniauth.auth"] # how gets info about user's github
-    user = User.find_by(uid: auth_hash[:uid], provider: params[:provider])
+    user = User.find_by(uid: auth_hash[:uid], provider: params[:provider], email: auth_hash[:info][:email], username: auth_hash[:info][:name])
     if user # exists
       flash[:status] = :success
       flash[:result_text] = "Existing user #{user.username} is logged in."
     else # user doesn't exist yet
          # call helper function
     user = User.build_from_github(auth_hash)
-      if user.save
+      if user.valid?
+        user.save
         flash[:status] = :success
         flash[:result_text] = "Logged in as new user #{user.username}"
       else
@@ -61,5 +62,11 @@ class UsersController < ApplicationController
     flash[:status] = :success
     flash[:result_text] = "Successfully logged out"
     redirect_to root_path
+  end
+
+  private
+
+  def strong_user_params # TODO: Currently unused. Not sure how to incorporate these into the create method?
+    return params.require(:user).permit(:username, :uid, :email, :provider, :avatar)
   end
 end
